@@ -25,3 +25,13 @@ def show_post(post_id):
 def show_path(subpath):
     #show the path after /path/
     return f'Subpath: { escape(subpath) }'
+
+@app.route('/login')
+def login():
+    return 'login'
+
+with app.test_request_context():
+    print(url_for('index'))
+    print(url_for('login'))
+    print(url_for('login',next='/'))
+    print(url_for('user', usename='John Doe'))
