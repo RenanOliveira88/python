@@ -5,7 +5,7 @@ from flask import (
 )
 from werkzeug.security import (check_password_hash, generate_password_hash)
 
-from db import get_db
+from .db import get_db
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -26,14 +26,14 @@ def register():
         if error is None:
             try:
                 db.execute(
-                    "INSERT INTO user (username, password VALUES (?,?)",
-                    (username, generate_password_hash(password)),
+                    "INSERT INTO user (username, password) VALUES (?,?)",
+                    (username, generate_password_hash(password))
                 )
                 db.commit()
             except db.IntegrityError:
                 error = f'Usuario { username } já cadastrado.'
             else:
-                return redirect(url_for("auth_login"))
+                return redirect(url_for("auth.login"))
 
         flash(error)
 
@@ -43,8 +43,8 @@ def register():
 @bp.route('/login', methods=('GET', 'POST'))
 def login():
     if request.method == 'POST':
-        username = request.form('username')
-        password = request.form('password')
+        username = request.form['username']
+        password = request.form['password']
         db = get_db()
         error = None
         user = db.execute(
